@@ -57,30 +57,46 @@ void figures(int *field) {
         int move = 0, from = 0, before = 0, changes = 0;
         switch (getchar()) {
             case 'a': {
-                move++;
-                from = 0;
-                before = WIDTH-1;
-                changes = 1;
-
+                move--;
+                for (int i = LENGTH-1; i >= 0; i--) { // 0 .. 49
+                    for (int j = 0; j < WIDTH; j++) { // 0 .. 79
+                        if ((field[i*WIDTH+j] == 2) && (((field[(i+1)*WIDTH+j]) != 1) && ((field[(i+1)*WIDTH+j]) != 2))) {
+                            field[i*WIDTH+j] = 0;
+                            field[(i+1)*WIDTH+(j+move)] = 2;
+                            output_field(field);
+                            pausedelay(150000);
+                        }
+                    }
+                }
             } break;
             case 'd': {
-                move--;
-                from = 0;
-                before = WIDTH-1;
-                changes = -1;
-            } break;
-            default: break;
-        }
-        for (int i = LENGTH-1; i >= 0; i--) { // 0 .. 49
-            for (int j = from; j != before; j-=changes) { // 0 .. 79
-                if ((field[i*WIDTH+j] == 2) && (((field[(i+1)*WIDTH+j]) != 1) && ((field[(i+1)*WIDTH+j]) != 2))) {
-                    field[i*WIDTH+j] = 0;
-                    field[(i+1)*WIDTH+(j+move)] = 2;
-                    output_field(field);
-                    pausedelay(150000);
+                move++;
+                for (int i = LENGTH-1; i >= 0; i--) { // 0 .. 49
+                     for (int j = WIDTH-1; j >= 0; j--) { // 0 .. 79
+                        if ((field[i*WIDTH+j] == 2) && (((field[(i+1)*WIDTH+j]) != 1) && ((field[(i+1)*WIDTH+j]) != 2))) {
+                            field[i*WIDTH+j] = 0;
+                            field[(i+1)*WIDTH+(j+move)] = 2;
+                            output_field(field);
+                            pausedelay(150000);
+                        }
+                    }
                 }
-            }
+            } break;
+            default: {
+                move = 0;
+                for (int i = LENGTH-1; i >= 0; i--) { // 0 .. 49
+                    for (int j = 0; j < WIDTH; j++) { // 0 .. 79
+                        if ((field[i*WIDTH+j] == 2) && (((field[(i+1)*WIDTH+j]) != 1) && ((field[(i+1)*WIDTH+j]) != 2))) {
+                            field[i*WIDTH+j] = 0;
+                            field[(i+1)*WIDTH+(j+move)] = 2;
+                            output_field(field);
+                            pausedelay(150000);
+                        }
+                    }
+                }
+            } break;
         }
+        
     }
 }
 
