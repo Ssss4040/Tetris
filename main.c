@@ -5,8 +5,8 @@
 #include <time.h>
 #include <stdio.h>
 
-#define WIDTH 38
-#define LENGTH 38
+#define WIDTH 18
+#define LENGTH 20
 #define TOP 0
 #define LEFT 0
 #define SPEED_UPDATE_FIELD 150000
@@ -21,6 +21,7 @@ int move_left(int *field, int flag);
 int move_right(int *field, int flag);
 int move_down(int *field, int flag);
 int check_down_figure(int *field);
+void check_fill_width(int *field);
 void figure_O(int *field);
 void figure_J(int *field);
 void figure_Z(int *field);
@@ -62,7 +63,7 @@ void start_field(int *field) {
     
     for (int i = 0; i < LENGTH; i++) {
         for (int j = 0; j < WIDTH; j++) {
-            if (i == TOP || j == LEFT || i == (WIDTH-1)  || j == (LENGTH-1))
+            if (i == TOP || j == LEFT || j == (WIDTH-1)  || i == (LENGTH-1))
                 field[i*WIDTH+j] = 1;
             else field[i*WIDTH+j] = 0;
         }
@@ -70,7 +71,7 @@ void start_field(int *field) {
 }
 
  void sample_figures(int *field, int *list_figures) {
-    switch (*list_figures) {
+    switch (0) {
         case 0: {
             figure_O(field);
             (*list_figures)++;
@@ -108,10 +109,12 @@ void figures_field(int *field, int *list_figures, int *speed_update) {
     *speed_update = SPEED_UPDATE_FIELD;
     int flag = 0;
     sample_figures(field, list_figures);
+    char vvv;
 
     while (check_down_figure(field) == 0) {
         pausedelay(speed_update);
-        switch (getchar()) {
+        scanf("%c", &vvv);
+        switch (vvv) {
             case 'a': {
                 flag = move_left(field, flag);
             } break;
@@ -122,12 +125,16 @@ void figures_field(int *field, int *list_figures, int *speed_update) {
                 (*speed_update) /= 2;
                 flag = move_down(field, flag);
             } break;
+            case '\n': {
+                flag = move_down(field, flag);
+            }
             default: {
                 //(*speed_update) = SPEED_UPDATE_FIELD;
-                flag = move_down(field, flag);
+                
             } break;
         }
         output_field(field);
+        check_fill_width(field);
     }
 }
 
@@ -143,6 +150,24 @@ int check_down_figure(int *field) {
             }
         }
     return stop_figure;
+}
+
+void check_fill_width(int *field) {
+    int count = 0;
+    for (int i = LENGTH-2; i >= TOP+1; i--) { // 0 .. 49
+        count = 0;
+        for (int j = WIDTH-2; j >= LEFT+1; j--) {
+            if (field[i*WIDTH+j] == 3) {
+                count++;
+            }
+            
+        }
+        // printf("%d---%d---\n",i, count);
+        if (count == ((WIDTH-1)-(TOP+1))) {
+            printf("\n---CLEAR---\n");
+        }
+    }
+    
 }
 
 int move_left(int *field, int flag) {
@@ -208,7 +233,7 @@ void output_field(int *field) {
                 case 1: printf("1"); break;
                 case 2: printf("2"); break;
                 case 3: printf("3"); break;
-                case 0: printf(" "); break;
+                case 0: printf("."); break;
                 
                 default:break;
             }
@@ -219,10 +244,10 @@ void output_field(int *field) {
 }
 
 void figure_O(int *field) {
+    field[1*WIDTH+(WIDTH/2)] = 2; // ##
     field[1*WIDTH+(WIDTH/2-1)] = 2; // ##
-    field[1*WIDTH+(WIDTH/2-2)] = 2; // ##
-    field[2*WIDTH+(WIDTH/2-1)] = 2;
-    field[2*WIDTH+(WIDTH/2-2)] = 2;    
+    field[2*WIDTH+(WIDTH/2)] = 2;
+    field[2*WIDTH+(WIDTH/2-1)] = 2;    
 }
 
 void figure_J(int *field) {
