@@ -105,7 +105,7 @@ void start_field(int *field) {
  }
 
 void figures_field(int *field, int *list_figures, int *speed_update) {
-    turn_figutes (field);
+    
     *speed_update = SPEED_UPDATE_FIELD;
     int flag = 0;
     sample_figures(field, list_figures);
@@ -134,8 +134,10 @@ void figures_field(int *field, int *list_figures, int *speed_update) {
             } break;
         }
         output_field(field);
-        check_fill_width(field);
     }
+    turn_figutes(field);
+    check_fill_width(field);
+    
 }
 
 int check_down_figure(int *field) {
@@ -154,20 +156,23 @@ int check_down_figure(int *field) {
 
 void check_fill_width(int *field) {
     int count = 0;
-    for (int i = LENGTH-2; i >= TOP+1; i--) { // 0 .. 49
+    for (int i = TOP+1; i < LENGTH; i++) { // 20
         count = 0;
-        for (int j = WIDTH-2; j >= LEFT+1; j--) {
+        for (int j = WIDTH-1; j >= LEFT+1; j--) { // 18
             if (field[i*WIDTH+j] == 3) {
                 count++;
             }
-            
-        }
-        // printf("%d---%d---\n",i, count);
-        if (count == ((WIDTH-1)-(TOP+1))) {
-            printf("\n---CLEAR---\n");
+            }
+            if (count == ((WIDTH-1)-(TOP+1))) {
+                for (int tmp = i; tmp > 2; tmp--) {
+                    for (int j = WIDTH-2; j >= LEFT+1; j--) {
+                        if(field[(tmp)*WIDTH+(j)] != 1)
+                            field[(tmp)*WIDTH+(j)] = field[(tmp-1)*WIDTH+j];
+                        field[(tmp-1)*WIDTH+(j)] = 0;
+                    }
+                }
         }
     }
-    
 }
 
 int move_left(int *field, int flag) {
