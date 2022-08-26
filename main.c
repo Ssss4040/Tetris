@@ -22,6 +22,7 @@ int move_right(int *field, int flag);
 int move_down(int *field, int flag);
 int check_down_figure(int *field);
 void check_fill_width(int *field);
+int check_move_figure(int *field, int move);
 void figure_O(int *field);
 void figure_J(int *field);
 void figure_Z(int *field);
@@ -129,8 +130,6 @@ void figures_field(int *field, int *list_figures, int *speed_update) {
                 flag = move_down(field, flag);
             }
             default: {
-                //(*speed_update) = SPEED_UPDATE_FIELD;
-                
             } break;
         }
         output_field(field);
@@ -162,15 +161,16 @@ void check_fill_width(int *field) {
             if (field[i*WIDTH+j] == 3) {
                 count++;
             }
-            }
-            if (count == ((WIDTH-1)-(TOP+1))) {
-                for (int tmp = i; tmp > 2; tmp--) {
-                    for (int j = WIDTH-2; j >= LEFT+1; j--) {
-                        if(field[(tmp)*WIDTH+(j)] != 1)
-                            field[(tmp)*WIDTH+(j)] = field[(tmp-1)*WIDTH+j];
-                        field[(tmp-1)*WIDTH+(j)] = 0;
+        }
+        if (count == ((WIDTH-1)-(TOP+1))) {
+            for (int tmp = i; tmp > 2; tmp--) {
+                for (int j = WIDTH-2; j >= LEFT+1; j--) {
+                    if(field[(tmp)*WIDTH+(j)] != 1) {
+                        field[(tmp)*WIDTH+(j)] = field[(tmp-1)*WIDTH+j];
                     }
+                    field[(tmp-1)*WIDTH+(j)] = 0;
                 }
+            }
         }
     }
 }
@@ -178,7 +178,9 @@ void check_fill_width(int *field) {
 int move_left(int *field, int flag) {
     int move = 0;
     move--;
+    if ((check_move_figure(field, move) == 0))
     for (int i = LENGTH-1; i >= 0; i--) { // 0 .. 49
+        
         for (int j = 0; j < WIDTH; j++) { // 0 .. 79
             if ((field[(i)*WIDTH+j] == 2)) {
                 field[i*WIDTH+j] = 0;
@@ -192,13 +194,28 @@ int move_left(int *field, int flag) {
 int move_right(int *field, int flag) {
     int move = 0;
     move++;
+    if (check_move_figure(field, move) == 0)
     for (int i = LENGTH-1; i >= 0; i--) { // 0 .. 49
+     
         for (int j = WIDTH-1; j >= 0; j--) { // 0 .. 79
             if ((field[(i)*WIDTH+j] == 2)) {
                 field[i*WIDTH+j] = 0;
                 field[(i+1)*WIDTH+(j+move)] = 2;
             }
         }
+    }
+    return flag;
+}
+
+int check_move_figure(int *field, int move) {
+    int flag = 0;
+    for (int i = LENGTH-1; i >= 0; i--) { // 0 .. 49
+        for (int j = 0; j < WIDTH; j++) { // 0 .. 79
+            if ((field[(i)*WIDTH+j] == 2) && (field[(i+1)*WIDTH+(j+move)] != 2) && (field[(i+1)*WIDTH+(j+move)] != 0)) {
+                if (field[(i+1)*WIDTH+(j+move)] != 0)
+                    flag = 1;
+            }
+        }          
     }
     return flag;
 }
@@ -220,7 +237,7 @@ int move_down(int *field, int flag) {
 void turn_figutes (int *field) {
     for (int i = LENGTH-1; i >= 0; i--) { // 0 .. 49
             for (int j = WIDTH-1; j >= 0; j--) {
-                if (field[i*WIDTH+j] == 2) {
+                if ((field[i*WIDTH+j] == 2)) {
                     field[i*WIDTH+j] = 3;
                 }
             }
