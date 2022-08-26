@@ -74,7 +74,7 @@ void start_field(int *field) {
 
  int sample_figures(int *field, int *list_figures) {
     int flag = 0;
-    switch (0) {
+    switch (*list_figures) {
         case 0: {
             flag = figure_O(field);
             (*list_figures)++;
