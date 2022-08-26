@@ -14,14 +14,13 @@
 void start_field(int *field);
 void sample_figures(int *field, int *list_figures);
 void figures_field(int *field, int *list_figures, int *speed_update);
-int check_update_filed(int *field, int *last_field);
 void output_field(int *field);
 void pausedelay(int *milli_seconds);
 void turn_figutes(int *field);
-int check_flag(int *field, int bottom_figure_length, int bottom_figure_width);
 int move_left(int *field, int flag);
 int move_right(int *field, int flag);
 int move_down(int *field, int flag);
+int check_down_figure(int *field);
 void figure_O(int *field);
 void figure_J(int *field);
 void figure_Z(int *field);
@@ -31,14 +30,14 @@ void figure_L(int *field);
 void figure_I(int *field);
 
 int main() {
-    initscr();
-    savetty();
-    nonl();
-    cbreak();
-    noecho();
-    timeout(0);
-    leaveok(stdscr, TRUE);
-    curs_set(0);
+    // initscr();
+    // savetty();
+    // nonl();
+    // cbreak();
+    // noecho();
+    // timeout(0);
+    // leaveok(stdscr, TRUE);
+    // curs_set(0);
     int speed_update = SPEED_UPDATE_FIELD;
     int field[LENGTH][WIDTH];
     int x = 0, list_figures = 0;
@@ -50,12 +49,12 @@ int main() {
         //pausedelay(150000);
     }
     // pausedelay(1000000);
-    curs_set(1);
-    clear();
-    refresh();
-    resetty();
-    endwin();
-    exit(0);
+    // curs_set(1);
+    // clear();
+    // refresh();
+    // resetty();
+    // endwin();
+    // exit(0);
     return 0;
 }
 
@@ -107,51 +106,43 @@ void start_field(int *field) {
 void figures_field(int *field, int *list_figures, int *speed_update) {
     turn_figutes (field);
     *speed_update = SPEED_UPDATE_FIELD;
-    int last_filed[LENGTH][WIDTH];
-    int flag = 0, bottom_figure_length = 0, bottom_figure_width = 0;
+    int flag = 0;
     sample_figures(field, list_figures);
-    
-    while (check_update_filed(field, &last_filed[0][0]) != 0) {
-        bottom_figure_length = 0;
-        bottom_figure_width = 0;
+
+    while (check_down_figure(field) == 0) {
         pausedelay(speed_update);
-        int move = 0, from = 0, before = 0, changes = 0;
-        for (int i = LENGTH-1; i >= 0; i--) { // 0 .. 49
+        switch (getchar()) {
+            case 'a': {
+                flag = move_left(field, flag);
+            } break;
+            case 'd': {
+                flag = move_right(field, flag);
+            } break;
+            case 's': {
+                (*speed_update) /= 2;
+                flag = move_down(field, flag);
+            } break;
+            default: {
+                //(*speed_update) = SPEED_UPDATE_FIELD;
+                flag = move_down(field, flag);
+            } break;
+        }
+        output_field(field);
+    }
+}
+
+int check_down_figure(int *field) {
+    int stop_figure = 0;
+    for (int i = LENGTH-1; i >= 0; i--) { // 0 .. 49
             for (int j = WIDTH-1; j >= 0; j--) {// 0 .. 79
-                last_filed[i][j] = field[i*WIDTH+j];
-                if ((field[i*WIDTH+j] == 2) && (bottom_figure_width == 0) && (bottom_figure_length == 0)) {
-                    bottom_figure_length = i;
-                    bottom_figure_width = j;
-                     printw("\nbotom figure = %d, bottom_figure_width = %d\n", bottom_figure_length, bottom_figure_width);
-                    //  printf("\nbotom figure = %d, bottom_figure_width = %d\n", bottom_figure_length, bottom_figure_width);
+                if (field[i*WIDTH+j] == 2) {
+                    if ((field[(i+1)*WIDTH+j] == 1) || (field[(i+1)*WIDTH+j] == 3)) {
+                        stop_figure = 1;
+                    }
                 }
             }
         }
-
-        if ((check_flag(field, bottom_figure_length, bottom_figure_width) == 0) 
-        && (check_flag(field, bottom_figure_length, bottom_figure_width+1) == 0)
-        && (check_flag(field, bottom_figure_length, bottom_figure_width-1) == 0) 
-        // && (check_flag(field, bottom_figure_length+1, bottom_figure_width-1) == 0)
-        // && (check_flag(field, bottom_figure_length+1, bottom_figure_width+1) == 0)
-        ) {
-            switch (getch()) {
-                case 'a': {
-                    flag = move_left(field, flag);
-                } break;
-                case 'd': {
-                    flag = move_right(field, flag);
-                } break;
-                case 's': {
-                    (*speed_update) /= 2;
-                    flag = move_down(field, flag);
-                } break;
-                default: {
-                    //(*speed_update) = SPEED_UPDATE_FIELD;
-                    flag = move_down(field, flag);
-                } break;
-            }
-        }
-    }
+    return stop_figure;
 }
 
 int move_left(int *field, int flag) {
@@ -159,18 +150,9 @@ int move_left(int *field, int flag) {
     move--;
     for (int i = LENGTH-1; i >= 0; i--) { // 0 .. 49
         for (int j = 0; j < WIDTH; j++) { // 0 .. 79
-            if ((field[(i+1)*WIDTH+j] == 2)) {
-                turn_figutes(field);
-                flag++;
-            } else { 
-                if ((field[i*WIDTH+j] == 2) && (((field[(i+1)*WIDTH+(j+move)]) != 1) && ((field[(i+1)*WIDTH+(j+move)]) != 2)) 
-                    && ((field[(i+1)*WIDTH+j]) != 3)
-                    && (flag == 0)) {
-                        field[i*WIDTH+j] = 0;
-                        field[(i+1)*WIDTH+(j+move)] = 2;
-                        clear();
-                        output_field(field);
-                } 
+            if ((field[(i)*WIDTH+j] == 2)) {
+                field[i*WIDTH+j] = 0;
+                field[(i+1)*WIDTH+(j+move)] = 2;
             }
         }
     }
@@ -182,55 +164,28 @@ int move_right(int *field, int flag) {
     move++;
     for (int i = LENGTH-1; i >= 0; i--) { // 0 .. 49
         for (int j = WIDTH-1; j >= 0; j--) { // 0 .. 79
-            if ((field[(i+1)*WIDTH+j] == 2)) {
-                turn_figutes(field);
-                flag++;
-            } else { 
-                if ((field[i*WIDTH+j] == 2) && (((field[(i+1)*WIDTH+(j+move)]) != 1) && ((field[(i+1)*WIDTH+(j+move)]) != 2)) 
-                    && ((field[(i+1)*WIDTH+(j+move)]) != 3)
-                    && (flag == 0)) {
-                        field[i*WIDTH+j] = 0;
-                        field[(i+1)*WIDTH+(j+move)] = 2;
-                        clear();
-                        output_field(field);
-                } 
+            if ((field[(i)*WIDTH+j] == 2)) {
+                field[i*WIDTH+j] = 0;
+                field[(i+1)*WIDTH+(j+move)] = 2;
             }
         }
     }
     return flag;
 }
 
-// int check_
-
 int move_down(int *field, int flag) {
     int move = 0;
     for (int i = LENGTH-1; i >= 0; i--) { // 0 .. 49
         for (int j = 0; j < WIDTH; j++) { // 0 .. 79
-            if ((field[(i+1)*WIDTH+j] == 2)) {
-                turn_figutes(field);
-                flag++;
-            } else { 
-                if ((field[i*WIDTH+j] == 2) && (((field[(i+1)*WIDTH+j]) != 1) && ((field[(i+1)*WIDTH+j]) != 2)) 
-                    && ((field[(i+1)*WIDTH+j]) != 3)
-                    && (flag == 0)) {
-                        field[i*WIDTH+j] = 0;
-                        field[(i+1)*WIDTH+(j+move)] = 2;
-                        clear();
-                        output_field(field);
-                } 
+            if ((field[(i)*WIDTH+j] == 2)) {
+                field[i*WIDTH+j] = 0;
+                field[(i+1)*WIDTH+(j+move)] = 2;
             }
         }          
     }
     return flag;
 }
 
-int  check_flag(int *field, int bottom_figure_length, int bottom_figure_width) {
-    int flag = 0;
-    if (field[(bottom_figure_length+1)*WIDTH+bottom_figure_width] != 0) {
-        flag = 1;
-    }
-    return flag;
-}
 
 void turn_figutes (int *field) {
     for (int i = LENGTH-1; i >= 0; i--) { // 0 .. 49
@@ -242,37 +197,24 @@ void turn_figutes (int *field) {
     }
 }
 
-
-int check_update_filed(int *field, int *last_field) {
-    int flag = 0;
-    for (int i = LENGTH-1; i >= 0; i--) { // 0 .. 49
-        for (int j = WIDTH-1; j >= 0; j--) {
-            if (last_field[i*WIDTH+j] != field[i*WIDTH+j]) {
-                flag++;
-            }
-        }
-    }
-    return flag;
-}
-
 void output_field(int *field) {
     for (int i = 0; i < LENGTH; i++) {
         for (int j = 0; j < WIDTH; j++) {
             switch (field[i*WIDTH+j]) {
-                case 1: printw("."); break;
-                case 2: printw("2"); break;
-                case 3: printw("3"); break;
-                case 0: printw("."); break;
-                // case 1: printf("1"); break;
-                // case 2: printf("2"); break;
-                // case 3: printf("3"); break;
-                // case 0: printf(" "); break;
+                // case 1: printw("."); break;
+                // case 2: printw("2"); break;
+                // case 3: printw("3"); break;
+                // case 0: printw("."); break;
+                case 1: printf("1"); break;
+                case 2: printf("2"); break;
+                case 3: printf("3"); break;
+                case 0: printf(" "); break;
                 
                 default:break;
             }
         }
-        printw("\n");
-        // printf("\n");
+        // printw("\n");
+        printf("\n");
     }
 }
 
