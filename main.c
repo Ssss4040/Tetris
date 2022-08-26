@@ -304,11 +304,10 @@ int figure_Z(int *field) {
     (field[1*WIDTH+(WIDTH/2)] == 0) &&
     (field[2*WIDTH+(WIDTH/2)] == 0) &&
     (field[2*WIDTH+(WIDTH/2+1)] == 0)) {
-
-    field[1*WIDTH+(WIDTH/2-1)] = 2; // ##
-    field[1*WIDTH+(WIDTH/2)] = 2;   //  ##
-    field[2*WIDTH+(WIDTH/2)] = 2;
-    field[2*WIDTH+(WIDTH/2+1)] = 2;
+        field[1*WIDTH+(WIDTH/2-1)] = 2; // ##
+        field[1*WIDTH+(WIDTH/2)] = 2;   //  ##
+        field[2*WIDTH+(WIDTH/2)] = 2;
+        field[2*WIDTH+(WIDTH/2+1)] = 2;
     } else {
         flag = 1;
     }
@@ -321,11 +320,10 @@ int figure_T(int *field) {
     (field[2*WIDTH+(WIDTH/2-1)] == 0) &&
     (field[2*WIDTH+(WIDTH/2)] == 0) &&
     (field[2*WIDTH+(WIDTH/2+1)] == 0)) {
-    
-    field[1*WIDTH+(WIDTH/2)] = 2;   //  #
-    field[2*WIDTH+(WIDTH/2-1)] = 2; // ###
-    field[2*WIDTH+(WIDTH/2)] = 2;
-    field[2*WIDTH+(WIDTH/2+1)] = 2;
+        field[1*WIDTH+(WIDTH/2)] = 2;   //  #
+        field[2*WIDTH+(WIDTH/2-1)] = 2; // ###
+        field[2*WIDTH+(WIDTH/2)] = 2;
+        field[2*WIDTH+(WIDTH/2+1)] = 2;
     } else {
         flag = 1;
     }
@@ -339,9 +337,9 @@ int figure_S(int *field) {
     (field[2*WIDTH+(WIDTH/2)] == 0) &&
     (field[2*WIDTH+(WIDTH/2-1)] == 0)) {
         field[1*WIDTH+(WIDTH/2)] = 2;   //  ##
-    field[1*WIDTH+(WIDTH/2+1)] = 2; // ##
-    field[2*WIDTH+(WIDTH/2)] = 2;
-    field[2*WIDTH+(WIDTH/2-1)] = 2;
+        field[1*WIDTH+(WIDTH/2+1)] = 2; // ##
+        field[2*WIDTH+(WIDTH/2)] = 2;
+        field[2*WIDTH+(WIDTH/2-1)] = 2;
     } else {
         flag = 1;
     }
@@ -354,11 +352,10 @@ int figure_L(int *field) {
     (field[2*WIDTH+(WIDTH/2)] == 0) &&
     (field[3*WIDTH+(WIDTH/2)] == 0) &&
     (field[3*WIDTH+(WIDTH/2+1)] == 0)) {
-
-    field[1*WIDTH+(WIDTH/2)] = 2;   // # 
-    field[2*WIDTH+(WIDTH/2)] = 2;   // #
-    field[3*WIDTH+(WIDTH/2)] = 2;   // ##
-    field[3*WIDTH+(WIDTH/2+1)] = 2;
+        field[1*WIDTH+(WIDTH/2)] = 2;   // # 
+        field[2*WIDTH+(WIDTH/2)] = 2;   // #
+        field[3*WIDTH+(WIDTH/2)] = 2;   // ##
+        field[3*WIDTH+(WIDTH/2+1)] = 2;
     } else {
         flag = 1;
     }
@@ -371,11 +368,10 @@ int figure_I(int *field) {
     (field[2*WIDTH+(WIDTH/2)] == 0) &&
     (field[3*WIDTH+(WIDTH/2)] == 0) &&
     (field[4*WIDTH+(WIDTH/2)] == 0)) {
-    
-    field[1*WIDTH+(WIDTH/2)] = 2;   // # 
-    field[2*WIDTH+(WIDTH/2)] = 2;   // #
-    field[3*WIDTH+(WIDTH/2)] = 2;   // #
-    field[4*WIDTH+(WIDTH/2)] = 2;   // #
+        field[1*WIDTH+(WIDTH/2)] = 2;   // # 
+        field[2*WIDTH+(WIDTH/2)] = 2;   // #
+        field[3*WIDTH+(WIDTH/2)] = 2;   // #
+        field[4*WIDTH+(WIDTH/2)] = 2;   // #
     } else {
         flag = 1;
     }
