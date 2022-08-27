@@ -13,9 +13,9 @@
 
 void start_field(int *field);
 int sample_figures(int *field, int *list_figures);
-void figures_field(int *field, int *list_figures, int *speed_update);
+void figures_field(int *field);
 void output_field(int *field);
-void pausedelay(int *milli_seconds);
+void pausedelay(int milli_seconds);
 void turn_figutes(int *field);
 void move_left(int *field);
 void move_right(int *field);
@@ -40,28 +40,22 @@ int main() {
     // timeout(0);
     // leaveok(stdscr, TRUE);
     // curs_set(0);
-    int speed_update = SPEED_UPDATE_FIELD;
-    int field[LENGTH][WIDTH];
-    int list_figures = 0;
-
-    start_field(&field[0][0]);
-
-        figures_field(&field[0][0], &list_figures, &speed_update);
-        //output_field(&field[0][0]);
-        //pausedelay(150000);
     
-    // pausedelay(1000000);
+    int field[LENGTH][WIDTH];
+    start_field(&field[0][0]);
+    figures_field(&field[0][0]);
+    
     // curs_set(1);
     // clear();
     // refresh();
     // resetty();
     // endwin();
     // exit(0);
+
     return 0;
 }
 
 void start_field(int *field) {
-    
     for (int i = 0; i < LENGTH; i++) {
         for (int j = 0; j < WIDTH; j++) {
             if (i == TOP || j == LEFT 
@@ -108,10 +102,10 @@ void start_field(int *field) {
     return flag;
  }
 
-void figures_field(int *field, int *list_figures, int *speed_update) {
-    *speed_update = SPEED_UPDATE_FIELD;
-
-    while (sample_figures(field, list_figures) == 0) {
+void figures_field(int *field) {
+    int speed_update = SPEED_UPDATE_FIELD;
+    int list_figures = 0;
+    while (sample_figures(field, &list_figures) == 0) {
         char vvv;
         while (check_down_figure(field) == 0) {
             pausedelay(speed_update);
@@ -124,7 +118,7 @@ void figures_field(int *field, int *list_figures, int *speed_update) {
                     move_right(field);
                 } break;
                 case 's': {
-                    (*speed_update) /= 2;
+                    speed_update /= 2;
                     move_down(field);
                 } break;
                 case '\n': {
@@ -237,11 +231,11 @@ void move_down(int *field) {
 
 void turn_figutes (int *field) {
     for (int i = LENGTH-1; i >= 0; i--) { // 0 .. 49
-            for (int j = WIDTH-1; j >= 0; j--) {
-                if ((field[i*WIDTH+j] == 2)) {
-                    field[i*WIDTH+j] = 3;
-                }
+        for (int j = WIDTH-1; j >= 0; j--) {
+            if ((field[i*WIDTH+j] == 2)) {
+                field[i*WIDTH+j] = 3;
             }
+        }
     }
 }
 
@@ -378,7 +372,7 @@ int figure_I(int *field) {
     return flag;
 }
 
-void pausedelay(int *milli_seconds) {
+void pausedelay(int milli_seconds) {
     clock_t start_time = clock();
-    while (clock() < start_time + *milli_seconds) {}
+    while (clock() < start_time + milli_seconds) {}
 }
