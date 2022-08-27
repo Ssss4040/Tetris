@@ -5,8 +5,8 @@
 #include <time.h>
 #include <stdio.h>
 
-#define WIDTH 18
-#define LENGTH 20
+#define WIDTH 28
+#define LENGTH 32
 #define TOP 0
 #define LEFT 0
 #define SPEED_UPDATE_FIELD 150000
@@ -68,7 +68,7 @@ void start_field(int *field) {
 
  int sample_figures(int *field, int *list_figures) {
     int flag = 0;
-    switch (*list_figures) {
+    switch (0) {
         case 0: {
             flag = figure_O(field);
             (*list_figures)++;
@@ -247,10 +247,10 @@ void output_field(int *field) {
                 // case 2: printw("2"); break;
                 // case 3: printw("3"); break;
                 // case 0: printw("."); break;
-                case 1: printf("1"); break;
-                case 2: printf("2"); break;
-                case 3: printf("3"); break;
-                case 0: printf("."); break;
+                case 1: printf("."); break;
+                case 2: printf("#"); break;
+                case 3: printf("#"); break;
+                case 0: printf(" "); break;
                 
                 default:break;
             }
